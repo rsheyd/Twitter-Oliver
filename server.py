@@ -29,6 +29,7 @@ import os
 import sys
 import twitter
 import time
+import pygame
 
 if sys.version_info >= (3, 0):
     from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -49,6 +50,8 @@ theUsersName = 'NotJohnOliver'
 statuses = api.GetUserTimeline(screen_name= theUsersName,count=1)
 print([s.text for s in statuses])
 statusSave = statuses
+
+pygame.mixer.init()
 
 
 ResponseStatus = namedtuple("HTTPStatus",
@@ -212,10 +215,15 @@ class ChunkedHTTPRequestHandler(BaseHTTPRequestHandler):
                                   "Wrong parameters")
         else:
             try:
-                # Request speech synthesis
-                response = polly.synthesize_speech(Text=statusSave,
-                                                    VoiceId=voiceId,
-                                                    OutputFormat=outputFormat)
+            	# Request speech synthesis
+            	response = polly.synthesize_speech(Text=statusSave,VoiceId=voiceId,OutputFormat=outputFormat)
+            	data_stream=response.get("AudioStream")
+            	file = open('stream.ogg', 'w')
+            	file.write(data_stream.read())
+            	file.close()
+            	pygame.mixer.music.load('stream.ogg')
+            	pygame.mixer.music.play()
+            	
             except (BotoCoreError, ClientError) as err:
                 # The service returned an error
                 raise HTTPStatusError(HTTP_STATUS["INTERNAL_SERVER_ERROR"],
@@ -273,6 +281,11 @@ cli.add_argument(
     "--host", type=str, metavar="HOST", dest="host", default="localhost")
 arguments = cli.parse_args()
 
+def play_tweets():
+	statuses = api.GetUserTimeline(screen_name=theUsersName,count=1)
+	for s in statuses:
+		statusSave = s.text
+
 # If the module is invoked directly, initialize the application
 if __name__ == '__main__':
     # Create and configure the HTTP server instance
@@ -284,14 +297,15 @@ if __name__ == '__main__':
                                                             arguments.port,
                                                             ROUTE_INDEX))
 
+
     try:
         # Listen for requests indefinitely
-        statuses = api.GetUserTimeline(screen_name=theUsersName,count=1)
-        for s in statuses:
-        	statusSave = s.text
+        play_tweets()
         server.serve_forever()
 			
     except KeyboardInterrupt:
         # A request to terminate has been received, stop the server
         print("\nShutting down...")
         server.socket.close()
+        
+    
