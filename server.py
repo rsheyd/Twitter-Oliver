@@ -27,6 +27,8 @@ from io import BytesIO
 from json import dumps as json_encode
 import os
 import sys
+import twitter
+import time
 
 if sys.version_info >= (3, 0):
     from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -39,6 +41,15 @@ else:
 
 from boto3 import Session
 from botocore.exceptions import BotoCoreError, ClientError
+
+api = twitter.Api(consumer_key='BqeKHaVy4Y7bUltpLuIUagA4y',consumer_secret='OxqsnUpMp5jBlMYdTntEjgUv6dceUc82CX9YS2Nitwp7ODSPN0',access_token_key='1392842840-6fHLrv7aHxgQHzZwidFeZrbiH5W4UdzS7Wfro1t',access_token_secret='b584M0NW3Plrn9yjKdf1DVHlZ4V4GOvEEk4LefXxkWZJ6')
+
+theUsersName = 'NotJohnOliver'
+
+statuses = api.GetUserTimeline(screen_name= theUsersName,count=1)
+print([s.text for s in statuses])
+statusSave = statuses
+
 
 ResponseStatus = namedtuple("HTTPStatus",
                             ["code", "message"])
@@ -202,7 +213,7 @@ class ChunkedHTTPRequestHandler(BaseHTTPRequestHandler):
         else:
             try:
                 # Request speech synthesis
-                response = polly.synthesize_speech(Text=text,
+                response = polly.synthesize_speech(Text=statusSave,
                                                     VoiceId=voiceId,
                                                     OutputFormat=outputFormat)
             except (BotoCoreError, ClientError) as err:
@@ -275,7 +286,11 @@ if __name__ == '__main__':
 
     try:
         # Listen for requests indefinitely
+        statuses = api.GetUserTimeline(screen_name=theUsersName,count=1)
+        for s in statuses:
+        	statusSave = s.text
         server.serve_forever()
+			
     except KeyboardInterrupt:
         # A request to terminate has been received, stop the server
         print("\nShutting down...")
