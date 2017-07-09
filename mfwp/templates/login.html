@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+{% block body %}
+{% if session['logged_in'] %}
+<p>You're logged in already!</p>
+{% else %}
+ 
+ 
+<form action="/" method="POST">
+	<div class="login">
+		<div class="login-screen">
+			<div class="app-title">
+				<h1>Login</h1>
+			</div>
+ 
+			<div class="login-form">
+				<div class="control-group">
+				<input type="text" class="login-field" value="" placeholder="Twitter User to Follow" name="handle">
+				<label class="login-field-icon fui-user" for="login-name"></label>
+				</div>
+				
+				<div class="control-group">
+				<select name="volume">
+				  <option value="low">Low</option>
+				  <option value="medium">Medium</option>
+				  <option value="High">High</option>
+				</select>
+				</div>
+ 
+                <input type="submit" value="Save" class="btn btn-primary btn-large btn-block" >
+			    <br>
+			</div>
+		</div>
+	</div>
+</form>
+ 
+{% endif %}
+{% endblock %}
