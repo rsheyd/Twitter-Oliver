@@ -30,6 +30,9 @@ import sys
 import twitter
 import time
 import pygame
+import json
+from os.path import join, dirname
+from watson_developer_cloud import TextToSpeechV1
 
 if sys.version_info >= (3, 0):
     from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -46,10 +49,6 @@ from botocore.exceptions import BotoCoreError, ClientError
 api = twitter.Api(consumer_key='BqeKHaVy4Y7bUltpLuIUagA4y',consumer_secret='OxqsnUpMp5jBlMYdTntEjgUv6dceUc82CX9YS2Nitwp7ODSPN0',access_token_key='1392842840-6fHLrv7aHxgQHzZwidFeZrbiH5W4UdzS7Wfro1t',access_token_secret='b584M0NW3Plrn9yjKdf1DVHlZ4V4GOvEEk4LefXxkWZJ6')
 
 theUsersName = 'NotJohnOliver'
-
-statuses = api.GetUserTimeline(screen_name= theUsersName,count=1)
-print([s.text for s in statuses])
-statusSave = statuses
 
 pygame.mixer.init()
 
@@ -282,9 +281,38 @@ cli.add_argument(
 arguments = cli.parse_args()
 
 def play_tweets():
-	statuses = api.GetUserTimeline(screen_name=theUsersName,count=1)
-	for s in statuses:
-		statusSave = s.text
+	currentStatus = api.GetUserTimeline(screen_name=theUsersName,count=1)
+	oldStatus = currentStatus
+
+	while True:
+		currentStatus = api.GetUserTimeline(screen_name=theUsersName,count=1)	
+		
+		if (currentStatus != oldStatus):
+			for s in currentStatus:
+				tweetText = s.text
+				downloadAudio(tweetText)
+				pygame.mixer.music.play()
+				while pygame.mixer.music.get_busy():
+					#print "Playing", pygame.mixer.music.get_pos()
+					time.sleep(0.020)
+				oldStatus = currentStatus
+		else:
+			print('skipped')
+		time.sleep(2)
+				
+def downloadAudio(tweetText):
+	text_to_speech = TextToSpeechV1(
+    username='f1a41b87-d977-4970-bd9a-96693a077c98',
+    password='ADLADdfoxMsY',
+    x_watson_learning_opt_out=True)  # Optional flag
+
+	with open(join(dirname(__file__), 'output.ogg'),
+			  'wb') as audio_file:
+		audio_file.write(
+			text_to_speech.synthesize(tweetText, accept='audio/ogg;codecs=vorbis',
+									  voice="en-US_MichaelVoice"))
+									#voice="en-US_AllisonVoice"))
+	pygame.mixer.music.load('output.ogg')
 
 # If the module is invoked directly, initialize the application
 if __name__ == '__main__':
