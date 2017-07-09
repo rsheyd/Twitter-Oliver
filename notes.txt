@@ -3,9 +3,22 @@
 
 @reboot /usr/bin/amixer cset numid=3 "1" 
 @reboot /usr/bin/amixer set Master 100%  
-@reboot /usr/bin/python /home/pi/Twitter-Oliver-master/mfwp/hello.py
+@reboot /usr/local/bin/python /home/pi/Twitter-Oliver-master/mfwp/hello.py
 
 NotABot
 HashtagNotabot
 #NotABot
 TwitterOliver
+
+---
+
+video script/description:
+
+Imagine you could have a figure of your favorite celebrity on your desk, and whenever that celebrity tweeted, the figure would speak their tweet outloud. [click save, zoom in]
+
+#Notabot is a low-cost twitter announcement IoT device. 
+We utilized IBM voice synthesis service and Twitter's API to create a web service that runs on a raspberry pi. Our app transforms your twitter feed to announcements spoken by a vinyl figurine on your desk. 
+
+To build notabot, we inserted a small speaker into a vinyl figurine. We installed our tweet-to-speech app on a raspberry pi. We made it configurable so you can select who you want to follow and other options.
+
+As a seamless 2nd screen technology, you can receive live audio tweets from your favorite Game of Thrones commentator with your notabot while watching the season finale. As a next gen advertising solution, Notabot can be licensed by someone like John Oliver, to be used to advertise upcoming shows, or related shows on the same TV network. For example, John Oliver tweets longer segments that would then be advertised by notabot. It can even can be sold very cheap or free “with offers” (ala Amazon kindles). On occasion ads would sometimes play back in between the live tweets.
