@@ -15,6 +15,7 @@ api = twitter.Api(consumer_key='BqeKHaVy4Y7bUltpLuIUagA4y',consumer_secret='Oxqs
 theVolume = ''
 volNum = 1
 
+
 pygame.mixer.init()
  
 app = Flask(__name__)
@@ -25,6 +26,7 @@ def home():
 	
 @app.route('/', methods=['POST'])
 def do_admin_login():
+	shouldRun = False
 	theUsersName = request.form['handle']
 	print(theUsersName)
 	if request.form['volume'] == 'Low':
@@ -35,11 +37,12 @@ def do_admin_login():
 		volNum = 1
 	theVolume = volNum
 	print(theVolume)
-	play_tweets(theUsersName)
+	shouldRun = True
+	play_tweets(theUsersName, shouldRun)	
 	return home()
  
 	
-def play_tweets(username):
+def play_tweets(username,shouldRun):
 	currentStatus = api.GetUserTimeline(screen_name=username,count=1)
 	oldStatus = currentStatus
 	
@@ -47,7 +50,7 @@ def play_tweets(username):
 				tweetText = s.text
 				print(tweetText)
 
-	while True:
+	while shouldRun:
 		currentStatus = api.GetUserTimeline(screen_name=username,count=1)	
 		
 		if (currentStatus != oldStatus):
