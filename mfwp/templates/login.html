@@ -6,20 +6,23 @@
 	<div class="login">
 		<div class="login-screen">
 			<div class="app-title">
-				<h1>Login</h1>
+				<h1>#NotABot</h1>
+				<h2>Configuration Page<h2>
 			</div>
  
 			<div class="login-form">
-				<div class="control-group">
-				<input type="text" class="login-field" value="" placeholder="Twitter User to Follow" name="handle">
+				<div class="form-group">
+				<label for="Username">Twitter User to Follow</label>
+				<input type="text" class="form-control" value="" placeholder="username" name="handle">
 				<label class="login-field-icon fui-user" for="login-name"></label>
 				</div>
 				
-				<div class="control-group">
-				<select name="volume">
-				  <option value="low">Low</option>
-				  <option value="medium">Medium</option>
+				<div class="form-group">
+				<label for="Volume">Volume</label>
+				<select class="form-control" name="volume">
 				  <option value="High">High</option>
+				  <option value="medium">Medium</option>
+				  <option value="low">Low</option>
 				</select>
 				</div>
  
