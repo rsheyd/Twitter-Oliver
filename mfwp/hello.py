@@ -62,7 +62,7 @@ def play_tweets(username,shouldRun):
 		if (currentStatus != oldStatus):
 			print("I made it here")
 			for s in currentStatus:
-				tweetText = username + ' just tweeted: ' + s.text
+				tweetText = s.text
 				print(tweetText)
 				downloadAudio(tweetText)
 				pygame.mixer.music.play()
