@@ -47,8 +47,14 @@ def play_tweets(username,shouldRun):
 	oldStatus = currentStatus
 	
 	for s in currentStatus:
-				tweetText = s.text
+				tweetText = username + ' last tweeted: ' + s.text
 				print(tweetText)
+				downloadAudio(tweetText)
+				pygame.mixer.music.play()
+				while pygame.mixer.music.get_busy():
+					#print "Playing", pygame.mixer.music.get_pos()
+					time.sleep(0.020)
+				oldStatus = currentStatus
 
 	while shouldRun:
 		currentStatus = api.GetUserTimeline(screen_name=username,count=1)	
@@ -56,7 +62,7 @@ def play_tweets(username,shouldRun):
 		if (currentStatus != oldStatus):
 			print("I made it here")
 			for s in currentStatus:
-				tweetText = s.text
+				tweetText = username + ' just tweeted: ' + s.text
 				print(tweetText)
 				downloadAudio(tweetText)
 				pygame.mixer.music.play()
@@ -84,4 +90,4 @@ def downloadAudio(tweetText):
  
  
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0', port=80)
+    app.run(debug=True,host='0.0.0.0', port=8080)
