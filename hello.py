@@ -38,47 +38,43 @@ def do_admin_login():
 	theVolume = volNum
 	print(theVolume)
 	shouldRun = True
-	play_tweets(theUsersName, shouldRun)	
+	playTweets(theUsersName, shouldRun)	
 	return home()
  
-	
-def play_tweets(username,shouldRun):
-	currentStatus = api.GetUserTimeline(screen_name=username,count=1)
-	oldStatus = currentStatus
-	
-	for s in currentStatus:
-				tweetText = username + ' last tweeted: ' + s.text
-				print(tweetText)
-				downloadAudio(tweetText)
-				pygame.mixer.music.play()
-				while pygame.mixer.music.get_busy():
-					#print "Playing", pygame.mixer.music.get_pos()
-					time.sleep(0.020)
-				oldStatus = currentStatus
 
-	while shouldRun:
-		currentStatus = api.GetUserTimeline(screen_name=username,count=1)	
+def getUpdatedStatusText():
+	currentStatus = api.GetUserTimeline(screen_name=username,count=1)
+	for s in currentStatus:
+		currentTweetText = s.text
+		oldTweetText = currentTweetText
+	
+def playTweets(username,shouldRun):
+	currentTweet = ''
+	lastTweet = ''
+	currentStatus = api.GetUserTimeline(screen_name=username,count=1)
+	for status in currentStatus:
+		currentTweet = status.text
+		firstTweetToPlay = username + ' last tweeted: ' + currentTweet
+		downloadAndPlayAudio(firstTweetToPlay)
+		lastTweet = currentTweet
 		
-		if (currentStatus != oldStatus):
-			print("I made it here")
-			for s in currentStatus:
-				tweetText = s.text
-				print(tweetText)
-				downloadAudio(tweetText)
-				pygame.mixer.music.play()
-				while pygame.mixer.music.get_busy():
-					#print "Playing", pygame.mixer.music.get_pos()
-					time.sleep(0.020)
-				oldStatus = currentStatus
-		else:
-			print('skipped')
-		time.sleep(2)
+	while shouldRun:
+		currentStatus = api.GetUserTimeline(screen_name=username,count=1)
+		for status in currentStatus:
+			currentTweet = status.text
+			if currentTweet != lastTweet:
+				downloadAndPlayAudio(currentTweet)
+				lastTweet = currentTweet
+			else:
+				print('skipped')
+				time.sleep(2)
 				
-def downloadAudio(tweetText):
+def downloadAndPlayAudio(tweetText):
+	print('Now playing: ' + tweetText)
 	text_to_speech = TextToSpeechV1(
-    username='f1a41b87-d977-4970-bd9a-96693a077c98',
-    password='ADLADdfoxMsY',
-    x_watson_learning_opt_out=True)  # Optional flag
+    	username='f1a41b87-d977-4970-bd9a-96693a077c98',
+	    password='ADLADdfoxMsY',
+	    x_watson_learning_opt_out=True)  # Optional flag
 
 	with open(join(dirname(__file__), 'output.ogg'),
 			  'wb') as audio_file:
@@ -87,6 +83,10 @@ def downloadAudio(tweetText):
 									  voice="en-US_MichaelVoice"))
 									#voice="en-US_AllisonVoice"))
 	pygame.mixer.music.load('output.ogg')
+	pygame.mixer.music.play()
+	while pygame.mixer.music.get_busy():
+					#print "Playing", pygame.mixer.music.get_pos()
+					time.sleep(0.020)
  
  
 if __name__ == "__main__":
