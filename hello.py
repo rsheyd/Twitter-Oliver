@@ -40,13 +40,6 @@ def do_admin_login():
 	shouldRun = True
 	playTweets(theUsersName, shouldRun)	
 	return home()
- 
-
-def getUpdatedStatusText():
-	currentStatus = api.GetUserTimeline(screen_name=username,count=1)
-	for s in currentStatus:
-		currentTweetText = s.text
-		oldTweetText = currentTweetText
 	
 def playTweets(username,shouldRun):
 	currentTweet = ''
